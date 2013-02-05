@@ -38,7 +38,10 @@ module.exports = function (grunt) {
                     beforeEach:true,
                     describe: true,
                     console: true,
-                    angular: true
+                    angular: true,
+                    afterEach: true,
+                    localStorage: true,
+                    sessionStorage: true
                 }
             }
         }
