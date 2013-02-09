@@ -63,11 +63,13 @@
             expect(cache.length).toBe(0);
             cache.setItem("hello","world");
             var inLocal = JSON.parse(localStorage.test);
-            expect(inLocal.hello).toBe("world");
+            expect(inLocal.hello.data).toBe("world");
         }));
         it("should initialize a cache from localStorage if exists",inject(function(lubStorage){
             localStorage.test = JSON.stringify({
-               hello: "world"
+               hello: {
+                   data: "world"
+               }
             });
             var cache = lubStorage("test");
             expect(cache.length).toBe(1);
@@ -78,7 +80,6 @@
             cache.setItem("hello","world");
             cache.removeItem("hello");
             var data = JSON.parse(localStorage.test);
-
             expect(Object.keys(data).length).toBe(0);
         }));
         it("should use sessionStorage if wanted",inject(function(lubStorage){
@@ -88,7 +89,7 @@
             cache.setItem("hello","world");
             expect(localStorage.test).toBe(undefined);
             expect(sessionStorage.test).not.toBe(undefined);
-            expect(JSON.parse(sessionStorage.test).hello).toBe("world");
+            expect(JSON.parse(sessionStorage.test).hello.data).toBe("world");
         }));
         it("should clear storages and data when calling clear",inject(function(lubStorage){
             var cache = lubStorage("test");
@@ -99,6 +100,69 @@
             expect(cache.length).toBe(0);
             expect(localStorage.test).toBe(undefined);
         }));
+        describe("auto expiring",function(){
+            it("should wrap the value in an object, having expiry key",inject(function(lubStorage){
+                var cache = lubStorage("test",{
+                    ttl: 5000
+                });
+                var time = new Date().getTime();
+                spyOn(cache,"$getTime").andReturn(time);
+
+                cache.setItem("hello","world");
+                var item = cache.getItem("hello");
+                expect(item).toBe("world");
+
+                var cacheObject = cache.$cacheObject("hello");
+                expect(cacheObject.expires).toBe(time+5000);
+            }));
+            it("should take the ttl value over the default ttl value",inject(function(lubStorage){
+                var cache = lubStorage("test",{
+                    ttl: 5000
+                });
+                var time = new Date().getTime();
+                spyOn(cache,"$getTime").andReturn(time);
+
+                cache.setItem("hello","world",{
+                    ttl: 1000
+                });
+                var cacheObject = cache.$cacheObject("hello");
+                expect(cacheObject.expires).toBe(time+1000);
+
+                cache.setItem("hello","world",{
+                    ttl: undefined
+                });
+                cacheObject = cache.$cacheObject("hello");
+                expect(cacheObject.expires).toBe(undefined);
+            }));
+
+            it("should not return a value if expires > currentdate",inject(function(lubStorage){
+                var cache = lubStorage("test",{
+                    ttl: 5000
+                });
+                var time = new Date().getTime();
+                var spy = spyOn(cache,"$getTime").andReturn(time);
+
+                cache.setItem("hello","world");
+                spy.andReturn(time+5001);
+                var cacheObject = cache.$cacheObject("hello");
+                expect(cacheObject.data).toBe(undefined);
+                expect(cache.getItem("hello")).toBe(undefined);
+            }));
+            it("should return a value if expires == currentdate",inject(function(lubStorage){
+                var cache = lubStorage("test",{
+                    ttl: 5000
+                });
+                var time = new Date().getTime();
+                var spy = spyOn(cache,"$getTime").andReturn(time);
+
+                cache.setItem("hello","world");
+                spy.andReturn(time+5000);
+                var cacheObject = cache.$cacheObject("hello");
+                expect(cacheObject.data).toBe("world");
+                expect(cache.getItem("hello")).toBe("world");
+            }));
+
+        });
     });
 
 })();

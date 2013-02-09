@@ -3,7 +3,8 @@ angular.module("lub-storage", [])
         var caches = {};
         return function (name, opts) {
             var options = angular.extend({
-                storage:"localStorage"
+                storage:"localStorage",
+                ttl:0
             }, opts);
             var initialData = {},
                 initialLength = 0,
@@ -24,13 +25,13 @@ angular.module("lub-storage", [])
                 }
             }
             return  caches[name] = {
-                setItem:function (key, val) {
-                    this.data[key] = val;
+                setItem:function (key, val, opts) {
+                    this.data[key] = this.$toCacheObject(val, opts);
                     this.length = this.length + 1;
                     storage[name] = JSON.stringify(this.data);
                 },
                 getItem:function (key) {
-                    return this.data[key];
+                    return this.$cacheObject(key).data;
                 },
                 removeItem:function (key) {
                     if (this.length === 0) {
@@ -46,7 +47,36 @@ angular.module("lub-storage", [])
                     this.length = 0;
                 },
                 data:initialData,
-                length:initialLength
+                length:initialLength,
+                $cacheObject:function (key) {
+                    var defaultRet = {
+                        data: undefined
+                    };
+                    var item = this.data[key] || defaultRet;
+                    if (!item.expires) {
+                        return item;
+                    } else if (this.$getTime() <= item.expires) {
+                        return item;
+                    } else {
+                        this.removeItem(key);
+                        return defaultRet;
+                    }
+                },
+                $getTime:function () {
+                    return new Date().getTime();
+                },
+                $toCacheObject:function (val, opts) {
+                    var config = angular.extend({
+                        ttl:0
+                    }, options, opts);
+                    var item = {
+                        data:val
+                    };
+                    if (angular.isNumber(config.ttl) && config.ttl > 0) {
+                        item.expires = this.$getTime() + config.ttl;
+                    }
+                    return item;
+                }
             };
         };
     });

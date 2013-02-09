@@ -41,7 +41,8 @@ module.exports = function (grunt) {
                     angular: true,
                     afterEach: true,
                     localStorage: true,
-                    sessionStorage: true
+                    sessionStorage: true,
+                    spyOn: true
                 }
             }
         }
