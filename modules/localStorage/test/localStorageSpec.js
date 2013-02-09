@@ -161,8 +161,21 @@
                 expect(cacheObject.data).toBe("world");
                 expect(cache.getItem("hello")).toBe("world");
             }));
-
         });
+
+        it("should return infos about the cache when info is called",inject(function(lubStorage){
+
+            var cache = lubStorage("test");
+
+            var info = cache.info();
+
+            expect(info.name).toBe("test");
+            expect(info.ttl).toBe(0);
+            expect(info.length).toBe(0);
+            cache.setItem("hello","world");
+            info = cache.info();
+            expect(info.length).toBe(1);
+        }));
     });
 
 })();

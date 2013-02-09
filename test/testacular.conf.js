@@ -12,8 +12,11 @@ files = [
     JASMINE_ADAPTER,
     'test/lib/angular.1.1.1.js',
     'test/lib/angular-mocks.1.1.1.js',
+    'modules/lub-cache.js',
     'modules/*/*.js',
-    'modules/*/test/*.js'
+    'modules/*/test/*.js',
+    'modules/test/*.js'
+
 ];
 
 
@@ -57,7 +60,7 @@ autoWatch = true;
 // - Safari (only Mac)
 // - PhantomJS
 // - IE (only Windows)
-browsers = ['PhantomJS'];
+browsers = ['PhantomJS',"Chrome"];
 
 
 // If browser does not capture in given timeout [ms], kill it

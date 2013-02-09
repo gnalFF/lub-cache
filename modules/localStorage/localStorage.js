@@ -46,11 +46,18 @@ angular.module("lub-storage", [])
                     delete storage[name];
                     this.length = 0;
                 },
+                info:function () {
+                    return {
+                        name:name,
+                        ttl:options.ttl,
+                        length: this.length
+                    };
+                },
                 data:initialData,
                 length:initialLength,
                 $cacheObject:function (key) {
                     var defaultRet = {
-                        data: undefined
+                        data:undefined
                     };
                     var item = this.data[key] || defaultRet;
                     if (!item.expires) {
