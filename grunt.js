@@ -16,7 +16,7 @@ module.exports = function (grunt) {
             },
             concat:{
                 build:{
-                    src:['<banner:meta.banner>', 'modules/*/*.js','modules/lub-local-cache.js'],
+                    src:['<banner:meta.banner>', 'modules/*/!(lubCacheSpec).js','modules/lub-cache.js'],
                     dest:'<%=build.dir%>/<%=build.name%>.js'
                 }
             },
