@@ -18,7 +18,6 @@
             sessionStorage.clear();
 
         });
-
         it("should init a lubStorage", inject(function (lubCache) {
             var cache = lubCache("test");
 
