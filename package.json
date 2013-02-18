@@ -1,12 +1,12 @@
 {
   "author": "https://github.com/gnalFF",
-  "name": "lub-local-cache",
+  "name": "lub-cache",
   "description": "AngularJS Local Cache Module",
   "version": "0.2.0",
-  "homepage": "https://github.com/gnalFF/lub-local-cache",
+  "homepage": "https://github.com/gnalFF/lub-cache",
   "repository": {
     "type": "git",
-    "url": "git://github.com/gnalFF/lub-local-cache.git"
+    "url": "git://github.com/gnalFF/lub-cache.git"
   },
   "engines": {
     "node": ">= 0.8.4"
